@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.TokenCacheProviders.InMemory;
+using Microsoft.OpenApi.Models;
 
 namespace GraphServiceApi
 {
@@ -23,8 +24,15 @@ namespace GraphServiceApi
             services.AddProtectedWebApi(Configuration)
                     .AddProtectedWebApiCallsProtectedWebApi(Configuration)
                     .AddInMemoryTokenCaches();
+            
             services.AddScoped<GraphClientAuthProvider>();
+            
             services.AddControllers();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Graph Service API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,8 +43,13 @@ namespace GraphServiceApi
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Graph Service API");
+            });
 
+            app.UseHttpsRedirection();
             app.UseRouting();
 
             app.UseAuthentication();

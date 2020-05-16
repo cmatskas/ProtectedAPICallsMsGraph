@@ -48,7 +48,8 @@ namespace GraphServiceApi.Controllers
                 upn = x.UserPrincipalName,
                 mail = x.Mail,
                 city = x.City,
-                jobTitle = x.JobTitle
+                jobTitle = x.JobTitle,
+                image=x.Photo
             });
         }
 
@@ -83,7 +84,8 @@ namespace GraphServiceApi.Controllers
                 upn = user.UserPrincipalName,
                 mail = user.Mail,
                 city = user.City,
-                jobTitle = user.JobTitle
+                jobTitle = user.JobTitle,
+                image = user.Photo
             };
         }
     }
