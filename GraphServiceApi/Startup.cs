@@ -26,6 +26,7 @@ namespace GraphServiceApi
                     .AddInMemoryTokenCaches();
             
             services.AddScoped<GraphClientAuthProvider>();
+            services.AddScoped<GraphClient>();
             
             services.AddControllers();
 

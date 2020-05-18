@@ -14,13 +14,11 @@ namespace GraphServiceApi.Controllers
     [Route("api/[controller]")]
     public class GraphController : ControllerBase
     {
-        private GraphClientAuthProvider graphClientAuth;
-        private readonly GraphServiceClient graphClient;
+        private GraphClient graphClient;
 
-        public GraphController(GraphClientAuthProvider auth)
+        public GraphController(GraphClient client)
         {
-            graphClientAuth = auth;
-            graphClient = new GraphServiceClient(graphClientAuth.AuthProvider);
+            graphClient = client;
         }
 
         [HttpGet]
@@ -30,11 +28,11 @@ namespace GraphServiceApi.Controllers
 
             try
             {
-                users = await graphClient.Users.Request().GetAsync();
+                users = await graphClient.ServiceClient.Users.Request().GetAsync();
             }
             catch (MsalUiRequiredException ex)
             {
-                graphClientAuth.Token.ReplyForbiddenWithWwwAuthenticateHeader(graphClientAuth.Scopes, ex);
+                  graphClient.AuthenticationProvider.Token.ReplyForbiddenWithWwwAuthenticateHeader(graphClient.AuthenticationProvider.Scopes, ex);
                 throw ex;
             }
             catch (Exception)
@@ -61,16 +59,16 @@ namespace GraphServiceApi.Controllers
             {
                 if (upn.Equals("me"))
                 {
-                    user = await graphClient.Me.Request().GetAsync();
+                    user = await graphClient.ServiceClient.Me.Request().GetAsync();
                 }
                 else
                 {
-                    user = await graphClient.Users[upn].Request().GetAsync();
+                    user = await graphClient.ServiceClient.Users[upn].Request().GetAsync();
                 }
             }
             catch (MsalUiRequiredException ex)
             {
-                graphClientAuth.Token.ReplyForbiddenWithWwwAuthenticateHeader(graphClientAuth.Scopes, ex);
+                graphClient.AuthenticationProvider.Token.ReplyForbiddenWithWwwAuthenticateHeader(graphClient.AuthenticationProvider.Scopes, ex);
                 throw ex;
             }
             catch (Exception)
