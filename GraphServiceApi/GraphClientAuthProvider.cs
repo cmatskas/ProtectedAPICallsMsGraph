@@ -28,17 +28,16 @@ namespace GraphServiceApi
 
         private DelegateAuthenticationProvider GetGraphClientAuthProvider()
         {
-            var accessToken = Token.GetAccessTokenForUserAsync(Scopes).GetAwaiter().GetResult();
-            
             if (authProvider != null)
             {
                 return authProvider;
             }
 
-            authProvider = new DelegateAuthenticationProvider(x => {
+            authProvider = new DelegateAuthenticationProvider(async x => {
+                var accessToken = await Token.GetAccessTokenForUserAsync(Scopes);
                 x.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                return Task.FromResult(0);
             });
+
 
             return authProvider;
         }
